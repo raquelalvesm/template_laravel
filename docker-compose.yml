@@ -1,0 +1,53 @@
+version: '2.1'
+services:
+  sjpi-api-app:
+    container_name: 'sjpi-api-app'
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /var/www
+    # command: bash -c "sed -i 's/\r//g' /usr/bin/laravel-postinstall.sh && chmod 755 /usr/bin/laravel-postinstall.sh && /usr/bin/laravel-postinstall.sh && php-fpm"
+    volumes:
+      - ./:/var/www
+    networks:
+      - docker
+    restart: always 
+    depends_on:
+      - db
+  
+  sjpi-api-web:
+    container_name: 'sjpi-api-web'
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    working_dir: /var/www
+   
+    volumes_from:
+      - sjpi-api-app
+    ports:
+      - 8282:80
+    depends_on:
+      - sjpi-api-app
+    networks:
+      - docker
+    restart: always 
+  
+  db:
+    container_name: 'sjpi-mysql'
+    image: mysql
+    restart: always
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: docker
+      MYSQL_DATABASE: docker
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+    volumes:
+      - .docker/dbdata:/var/lib/mysql
+    networks:
+      - docker      
+
+networks:
+  docker:
+    driver: bridge
