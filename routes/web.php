@@ -73,6 +73,7 @@ Route::get('login', [LoginController::class, 'index'])->name('login');
 // Route::get('registration', [LoginController::class, 'registration'])->name('register-user');
 // Route::post('custom-registration', [LoginController::class, 'customRegistration'])->name('register.custom'); 
 // Route::get('signout', [LoginController::class, 'signOut'])->name('signout');
+Route::delete('/users/{id}',[DadosController::class, 'delete'])->name('users.delete');
 Route::put('/users/{id}',[DadosController::class, 'update'])->name('users.update');
 Route::get('/users/{id}/edit',[DadosController::class, 'edit'])->name('users.edit');
 Route::get('/users',[DadosController::class, 'index'])->name('users.index');

@@ -8,10 +8,18 @@ use Illuminate\Http\Request;
 
 class DadosController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::get();
-        // dd($users)    ;
+        // dd($request->search);
+        // $users = User::get();
+        $search = $request->search;
+        $users = User::where(function ($query) use ($search){
+            if($search){
+                $query->where('email', $search);
+                $query->orWhere('name', 'LIKE', "%{$search}%");
+            }
+        })->get();
+        // dd($users);
         return view('users.index', compact('users'));
     }
 
@@ -61,7 +69,7 @@ class DadosController extends Controller
     }
 
     
-    public function update(StoreUpdateUserFormRequest $request, $id)
+    public function update(Request $request, $id)
     {
         if (!$user = User::find($id))
 
@@ -76,5 +84,16 @@ class DadosController extends Controller
             return redirect()->route('users.index');
         // return view('users.edit', compact('user'));
         // dd($request->all());
+    }
+
+    public function delete(Request $request, $id)
+    {
+        if (!$user = User::find($id))
+
+             return redirect()->route('users.index');
+                    
+        $user->delete();
+        return redirect()->route('users.index');
+      
     }
 }
